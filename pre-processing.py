@@ -4,7 +4,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 
-data = pd.read_parquet("freMTPL2freq.parquet")
+data = pd.read_csv("freMTPL2freq.csv")
 
 response_variable = "ClaimNb"
 exposure_variable = "Exposure"
@@ -46,3 +46,6 @@ transformer = ColumnTransformer(
 
 X = transformer.fit_transform(X).astype("float32")
 X_val = transformer.transform(X_val).astype("float32")
+
+
+print("fin.")
