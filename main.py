@@ -46,7 +46,31 @@ class LocalGLMNet(nn.Module):
         return x
 
 
+import pandas as pd
+import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split
+
 def pre_process_data():
+    """
+    Pre-processes the data for the GLM model.
+
+    Reads in the data from a CSV file, drops the 'IDpol' column, converts
+    categorical variables to category data type, and continuous variables
+    to float32 data type. Adds a 'RandN' column with random normal values.
+    Splits the data into training and validation sets. Uses a ColumnTransformer
+    to scale continuous variables and one-hot encode categorical variables.
+    Returns the pre-processed training and validation data.
+
+    Returns:
+    X (numpy.ndarray): Pre-processed training data.
+    X_val (numpy.ndarray): Pre-processed validation data.
+    v (numpy.ndarray): Training exposure data.
+    v_val (numpy.ndarray): Validation exposure data.
+    y (numpy.ndarray): Training response data.
+    y_val (numpy.ndarray): Validation response data.
+    """
     data = pd.read_csv("freMTPL2freq.csv")
 
     response_variable = "ClaimNb"
