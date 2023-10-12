@@ -12,6 +12,16 @@ from skorch import NeuralNetRegressor
 
 
 class LocalGLMNet(nn.Module):
+    """
+    A neural network model for generalized linear models with local linear
+    approximation. The model consists of a series of fully connected hidden
+    layers with a tanh activation function, followed by a skip connection and
+    an output layer with an exponential activation function. The skip connection
+    is computed as the dot product between the output of the last hidden layer
+    and the input features. The output of the model is the element-wise product
+    of the output of the output layer and an exposure parameter (if provided).
+    """
+    
     def __init__(self, input_size, hidden_layer_sizes):
         super(LocalGLMNet, self).__init__()
 
@@ -30,20 +40,31 @@ class LocalGLMNet(nn.Module):
         self.inverse_link = torch.exp
 
     def forward(self, features, exposure=None, attentions=False):
-        x = features
-        for layer in self.hidden_layers:
-            x = self.activation(layer(x))
-        x = self.last_hidden_layer(x)
-        if attentions:
+            """
+            Forward pass of the model.
+
+            Args:
+                features (torch.Tensor): Input features.
+                exposure (torch.Tensor, optional): Exposure variable. Defaults to None.
+                attentions (bool, optional): Whether to return attention weights. Defaults to False.
+
+            Returns:
+                torch.Tensor: Model output.
+            """
+            x = features
+            for layer in self.hidden_layers:
+                x = self.activation(layer(x))
+            x = self.last_hidden_layer(x)
+            if attentions:
+                return x
+            # Dot product
+            skip_connection = torch.einsum("ij,ij->i", x, features).unsqueeze(1)
+            x = self.output_layer(skip_connection)
+            x = self.inverse_link(x)
+            if exposure is None:
+                exposure = torch.ones_like(x, device=features.device)
+            x = x * exposure
             return x
-        # Dot product
-        skip_connection = torch.einsum("ij,ij->i", x, features).unsqueeze(1)
-        x = self.output_layer(skip_connection)
-        x = self.inverse_link(x)
-        if exposure is None:
-            exposure = torch.ones_like(x, device=features.device)
-        x = x * exposure
-        return x
 
 
 import pandas as pd
@@ -117,6 +138,17 @@ def pre_process_data():
 
 
 def train_model(X, v, y):
+    """
+    Trains a LocalGLMNet model using the provided input data and returns the trained model.
+
+    Args:
+        X (numpy.ndarray): Input features of shape (n_samples, n_features).
+        v (numpy.ndarray): Exposure variable of shape (n_samples,).
+        y (numpy.ndarray): Target variable of shape (n_samples,).
+
+    Returns:
+        NeuralNetRegressor: Trained LocalGLMNet model.
+    """
     localglmnet = NeuralNetRegressor(
         module=LocalGLMNet,
         max_epochs=10,
@@ -138,13 +170,20 @@ def train_model(X, v, y):
 # writing main function
 
 def main():
+    """
+    Trains a local GLMNET model using pre-processed data and returns the trained model.
+
+    Returns:
+    localglmnet: trained GLMNET model
+    """
     X, X_val, v, v_val, y, y_val = pre_process_data()
     localglmnet = train_model(X, v, y)
     return localglmnet
 
 if __name__ == "__main__":
     main()
-    print("completed")
+    print("complete! 🎉")
+
     
 
 
