@@ -1,2 +1,4 @@
 *.arff
 *.csv
+**/*.DS_Store
+**/*.sh.swp
