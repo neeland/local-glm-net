@@ -137,7 +137,7 @@ def pre_process_data():
     return X, X_val, v, v_val, y, y_val
 
 
-def train_model(X, v, y):
+def train_model(X, v, y, device):
     """
     Trains a LocalGLMNet model using the provided input data and returns the trained model.
 
@@ -145,6 +145,7 @@ def train_model(X, v, y):
         X (numpy.ndarray): Input features of shape (n_samples, n_features).
         v (numpy.ndarray): Exposure variable of shape (n_samples,).
         y (numpy.ndarray): Target variable of shape (n_samples,).
+        device: Device to use for training.
 
     Returns:
         NeuralNetRegressor: Trained LocalGLMNet model.
@@ -159,13 +160,22 @@ def train_model(X, v, y):
         optimizer=NAdam,
         lr=0.01,
         batch_size=512,
-        device="cuda",
+        device=device,
     )
 
     X_dict = {"features": X, "exposure": v}
     localglmnet.fit(X_dict, y)
     
     return localglmnet
+
+def get_device():
+        """
+        Returns the device to use for training.
+
+        Returns:
+        torch.device: Device to use for training.
+        """
+        return torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
 # writing main function
 
@@ -176,14 +186,11 @@ def main():
     Returns:
     localglmnet: trained GLMNET model
     """
+    device = get_device()
     X, X_val, v, v_val, y, y_val = pre_process_data()
-    localglmnet = train_model(X, v, y)
+    localglmnet = train_model(X, v, y, device)
     return localglmnet
 
 if __name__ == "__main__":
     main()
     print("complete! 🎉")
-
-    
-
-
