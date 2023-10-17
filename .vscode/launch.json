@@ -11,6 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
+            "python": "${/Users/neelanpather/miniconda3/envs/local-glm-net/bin/python}"
         }
     ]
 }

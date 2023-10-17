@@ -1,6 +1,6 @@
-np
-pd
-sklearn
+numpy
+pandas
+scikit-learn
 torch
 skorch
 pyarrow
