@@ -2,6 +2,6 @@
 *.csv
 **/*.DS_Store
 **/*.sh.swp
-venv/**
-**/*.cpython-38.pyc
-conda list -e > requirements.txt
+**/*.pyc
+**/__pycache__
+**/.conda/**

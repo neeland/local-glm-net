@@ -3,9 +3,9 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
+DATA_PATH = "./data/freMTPL2freq_clean.csv"
 
-
-def pre_process_data():
+def pre_process_data(verbose=False):
     """
     Pre-processes the data for the GLM model.
 
@@ -24,7 +24,7 @@ def pre_process_data():
     y (numpy.ndarray): Training response data.
     y_val (numpy.ndarray): Validation response data.
     """
-    data = pd.read_csv("./data/freMTPL2freq.csv")
+    data = pd.read_csv(DATA_PATH)
 
     response_variable = "ClaimNb"
     exposure_variable = "Exposure"
@@ -66,4 +66,17 @@ def pre_process_data():
 
     X = transformer.fit_transform(X).astype("float32")
     X_val = transformer.transform(X_val).astype("float32")
+
+    if verbose:
+        print(f"X shape: {X.shape}")
+        print(f"X_val shape: {X_val.shape}")
+        print(f"v shape: {v.shape}")
+        print(f"v_val shape: {v_val.shape}")
+        print(f"y shape: {y.shape}")
+        print(f"y_val shape: {y_val.shape}")
+    
     return X, X_val, v, v_val, y, y_val
+
+
+if __name__ == "__main__":
+    pre_process_data(verbose=True)

@@ -17,7 +17,7 @@ def main():
     localglmnet: trained GLMNET model
     """
     device = get_device()
-    X, X_val, v, v_val, y, y_val = pre_process_data()
+    X, X_val, v, v_val, y, y_val = pre_process_data(verbose=True)
     localglmnet = train_model(X, v, y, device)
     ### Extracting attentions &  contributions
     localglmnet_module = localglmnet.module_.to("cpu")
