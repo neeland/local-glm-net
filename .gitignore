@@ -3,3 +3,4 @@
 **/*.DS_Store
 **/*.sh.swp
 venv/**
+**/*.cpython-38.pyc
