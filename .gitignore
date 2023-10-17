@@ -4,3 +4,4 @@
 **/*.sh.swp
 venv/**
 **/*.cpython-38.pyc
+conda list -e > requirements.txt
