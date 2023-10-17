@@ -162,7 +162,6 @@ def train_model(X, v, y, device):
 
     X_dict = {"features": X, "exposure": v}
     localglmnet.fit(X_dict, y)
-    
     return localglmnet
 
 def get_device():
